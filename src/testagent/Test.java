@@ -45,14 +45,15 @@ public class Test {
 				addTest("name", Comparison.Equals, "Chaser").
 				addTest("x", Comparison.lt, 100). 
 				addTest("x", Comparison.lte, new Variable("playerX")));  
-		preconditions.add(ConditionPrototype.createNegation(BulletWME.class));
- 
+		preconditions.add(ConditionPrototype.createNegation(BulletWME.class));	
+		preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("validTrajectory"));
 		
 		ArrayList<ConditionPrototype> waitConditions = new ArrayList<ConditionPrototype>();
 		waitConditions.add(ConditionPrototype.createWMECondition(BulletWME.class));
  		 
 		steps = new ArrayList<StepPrototype>();  
-		steps.add(StepPrototype.createWaitStep(waitConditions));  
+		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 450 })); 
+//		steps.add(StepPrototype.createWaitStep(waitConditions));  
 		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
 		steps.add(StepPrototype.createSpawngoal("print").setParameters(new Object[] { "Hello spawngoal", new Variable("playerX") }).setPriority(6));
 //		steps.add(StepPrototype.createSubgoal("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
@@ -119,7 +120,7 @@ public class Test {
 		
 		BulletWME bullet = new BulletWME();
 		
- 		for (int i=0; i<=10; i++) { 
+ 		for (int i=0; i<=5; i++) { 
 			System.out.println("\nABT Cycle " + i);
 			System.out.println("-----------------");
 			agent.printABT();
