@@ -16,7 +16,7 @@ public class BehaviorPrototype {
  
 	private int specificity; 
 	   
-//	private int numberNeededForSuccess;  
+//	private int numberNeededForSuccess;   
 	 
 	private ArrayList<ConditionPrototype> preconditions = new ArrayList<ConditionPrototype>(); 
 //	private ArrayList<Condition> contextConditions; 
@@ -64,7 +64,11 @@ public class BehaviorPrototype {
 	public ArrayList<StepPrototype> getSteps() {
 		return steps; 
 	}
-
+ 
+	public int getSpecificity() {
+		return specificity;
+	}
+	
 	public boolean matchingSignature(String goalName, Object[] parameters) {
 		if (!this.goalName.equals(goalName)) {
 			return false;

@@ -43,7 +43,15 @@ public class StepPrototype {
 	public static StepPrototype createAction(String actionName) {
 		return new StepPrototype(StepType.Action, actionName);
 	}
+
+	public static StepPrototype createSucceedStep() {
+		return new StepPrototype(StepType.SucceedStep);
+ 	}
  
+	public static StepPrototype createFailStep() {
+		return new StepPrototype(StepType.FailStep);
+	}
+
 	public StepPrototype setParameters(Object[] parameters) {
 		this.parameters = parameters;
 		return this;
