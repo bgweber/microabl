@@ -27,4 +27,8 @@ public class ChaserWME extends WME {
 	public String toString() {
 		return "ChaserWME (" + x + ", " + y + ")";
 	}
+	
+	public String getName() {
+		return "Chaser"; 
+	}
 }
