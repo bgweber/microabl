@@ -1,13 +1,14 @@
 package abllite.abt;
 
 
+
 public class GoalNode extends ABTNode {
 	
 
 	private String goalName;
-	
-	private Object[] parameters; 
-	
+
+	private Object[] parameters = new Object[] {}; 
+  
 	public GoalNode(String goalName, Object[] parameters) {
 		this.goalName = goalName;
 		this.parameters = parameters;
@@ -15,14 +16,14 @@ public class GoalNode extends ABTNode {
 	
 	public String getGoalName() {
 		return goalName;
+	} 
+
+	public void setParameters(Object[] parameters) {
+		this.parameters = parameters;
 	}
-	  
-	public Object[] getParameters() {
-		return parameters;
-	}
-	 
-	public String toString() {
-		return "GoalNode: " + goalName + " (" + nodeStatus + ") " + getPriority(); 
+	
+	public String toString() { 
+		return "GoalNode: " + goalName + " [" + parameters.length + "] (" + nodeStatus + ") " + getPriority(); 
 	}
 	
 	public void childCompleted(ABTNode child) {
@@ -37,5 +38,9 @@ public class GoalNode extends ABTNode {
 			
 			// TODO: mark as open, and add attempted behavior to list
 		} 
+	}
+	   
+	public Object[] getParameters() {
+		return parameters;
 	}
 }

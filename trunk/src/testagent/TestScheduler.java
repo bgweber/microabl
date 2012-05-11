@@ -8,6 +8,9 @@ public class TestScheduler implements ActionListener {
 
 	public void execute(final ActionNode action) {
 		System.out.println("Executing action: " + action.getActionName());
+		for (Object p : action.getParameters()) {
+			System.out.println("  param: " + p);
+		}
 		
 		
 		if (action.getActionName().equals("WaitMS")) {

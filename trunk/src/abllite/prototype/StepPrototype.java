@@ -16,7 +16,7 @@ public class StepPrototype {
 
 	private StepType stepType; 
 	private String stepName; 	// action name, subgoal name
-   
+    
 	private Object[] parameters = new Object[0]; // considered literals, except for BehaviorParameter instances 
 	private StepModifier modifier = StepModifier.None; 
 
@@ -26,7 +26,7 @@ public class StepPrototype {
 	public StepPrototype(StepType stepType) {
 		this.stepType = stepType;
 	} 
-
+ 
 	public StepPrototype(StepType stepType, String stepName) {
 		this(stepType);
 		this.stepName = stepName;
@@ -35,7 +35,11 @@ public class StepPrototype {
 	public static StepPrototype createSubgoal(String goalName) {
 		return new StepPrototype(StepType.Subgoal, goalName);
 	}
-   
+ 
+	public static StepPrototype createSpawngoal(String goalName) {
+		return new StepPrototype(StepType.Spawngoal, goalName);
+	}
+
 	public static StepPrototype createAction(String actionName) {
 		return new StepPrototype(StepType.Action, actionName);
 	}

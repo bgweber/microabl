@@ -11,6 +11,7 @@ public class ABTNode {
 	private ABTNode parent; 
 	
 	private int priority;
+	private boolean prioritySpecified = false;
 	
 	private ArrayList<ABTNode> children = new ArrayList<ABTNode>(); 
 	
@@ -29,6 +30,11 @@ public class ABTNode {
 	
 	public void setPriority(int priority) {
 		this.priority = priority;
+		prioritySpecified = true;
+	}
+	 
+	public boolean getPrioritySpecified() {
+		return prioritySpecified;
 	}
 	
 	public boolean isOpen() {

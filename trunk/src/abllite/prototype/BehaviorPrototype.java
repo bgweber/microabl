@@ -1,23 +1,24 @@
 package abllite.prototype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class BehaviorPrototype {
+public class BehaviorPrototype { 
 
 	public enum BehaviorType { Sequential, Parallel }	 
     
 	private BehaviorType behaviorType; 	
 	private String goalName; 
 	private ArrayList<StepPrototype> steps = new ArrayList<StepPrototype>();	
+
+	private ArrayList<Class> parameterClasses = new ArrayList(); 
+	private ArrayList<String> parameterNames = new ArrayList(); 
  
-	private Class[] parameterClasses = new Class[0]; 
-	private String[] parameterNames = new String[0]; 
-  	 
 	private int specificity; 
-	  
-	private int numberNeededForSuccess;  
+	   
+//	private int numberNeededForSuccess;  
 	 
-//	private ArrayList<Condition> preconditions; 
+	private ArrayList<ConditionPrototype> preconditions = new ArrayList<ConditionPrototype>(); 
 //	private ArrayList<Condition> contextConditions; 
 //	private ArrayList<Condition> successConditions;  
  	
@@ -39,6 +40,17 @@ public class BehaviorPrototype {
     	this.steps = steps;
     	return this; 
     }
+ 
+    public BehaviorPrototype addParameter(Class type, String name) {
+    	parameterClasses.add(type);
+    	parameterNames.add(name); 
+    	return this; 
+    }
+
+    public BehaviorPrototype setPreconditions(ArrayList<ConditionPrototype> preconditions) {
+    	this.preconditions = preconditions;
+    	return this; 
+    }
 
     public BehaviorPrototype setSpecificity(int specificity) {
     	this.specificity = specificity;
@@ -57,18 +69,34 @@ public class BehaviorPrototype {
 		if (!this.goalName.equals(goalName)) {
 			return false;
 		}
-		
-		if (parameters.length != parameterClasses.length) {
+				
+		if (parameters.length != parameterClasses.size()) {
 			return false;
 		}
 		
-		for (int i=0; i<parameters.length; i++) {
-			if (parameterClasses[i].isInstance(parameters[i])) {
+		System.out.println("Matching");
+ 
+		for (int index=0; index<parameters.length; index++) { 
+			System.out.println(" param: " + parameters[index]);
+			
+			if (!parameterClasses.get(index).isInstance(parameters[index])) {
 				return false; 
 			}
 		}
 		
 		return true;
+	}
+   
+	public HashMap<String, Object> bindVariables(Object[] parameters) {
+		HashMap<String, Object> variables = new HashMap<String, Object>();
+
+		int index = 0;
+		for (Object parameter : parameters) { 
+			variables.put(parameterNames.get(index), parameter);
+			index++;
+		}
+  
+		return variables;
 	}
 
 	public boolean isSequential() {
@@ -77,6 +105,10 @@ public class BehaviorPrototype {
 	  
 	public boolean isParallel() {
 		return behaviorType == BehaviorType.Parallel;
+	}
+	 
+	public ArrayList<ConditionPrototype> getPreconditions() {
+		return preconditions;
 	}
 }
  

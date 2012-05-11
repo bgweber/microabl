@@ -1,13 +1,15 @@
 package abllite.abt;
 
+import java.util.HashMap;
+
 import abllite.prototype.BehaviorPrototype;
 
 public class ParallelNode extends BehaviorNode {
 
 	int stepsCompleted = 0;
 	
-	public ParallelNode(BehaviorPrototype prototype) {
-		super(prototype);		
+	public ParallelNode(BehaviorPrototype prototype, HashMap<String, Object> parameters) {
+		super(prototype, parameters);		
 	} 
 	 
 	
@@ -18,8 +20,8 @@ public class ParallelNode extends BehaviorNode {
 	public void childCompleted(ABTNode child) {
 		if (child.isFailure()) {
 			setStatus(NodeStatus.Failure);
-		} 
-		else {
+		}  
+		else { 
 			stepsCompleted++;
 			if (stepsCompleted == steps.size()) {
 				setStatus(NodeStatus.Success);
