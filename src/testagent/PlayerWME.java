@@ -23,8 +23,12 @@ public class PlayerWME extends WME {
 	public void setY(int y) {
 		this.y = y;
 	}	
-	 
+	  
 	public String toString() {
 		return "PlayerWME (" + x + ", " + y + ")";
+	}
+	
+	public String getName() {
+		return "Player"; 
 	}
 }

@@ -14,7 +14,7 @@ public class ParallelNode extends BehaviorNode {
 	 
 	
 	public String toString() {
-		return "ParallelNode: " + goalName + " (" + nodeStatus + ") " + getPriority(); 
+		return "ParallelNode: " + getGoalName() + " (" + nodeStatus + ") " + getPriority(); 
 	}
 	 
 	public void childCompleted(ABTNode child) {

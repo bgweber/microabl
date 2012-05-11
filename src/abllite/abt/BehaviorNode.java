@@ -11,7 +11,7 @@ public class BehaviorNode extends ABTNode {
 
 	// context conditions, success conditions 
  
-	protected String goalName; 
+	private String goalName; 
  
 	protected ArrayList<ABTNode> steps = new ArrayList<ABTNode>();
   	 
@@ -25,6 +25,10 @@ public class BehaviorNode extends ABTNode {
 			steps.add(stepPrototype.createABTNode(false));			
 		}
 	} 
+	
+	public String getGoalName() {
+		return goalName;
+	}
 	 
 	public ArrayList<ABTNode> getSteps() {
 		return steps;

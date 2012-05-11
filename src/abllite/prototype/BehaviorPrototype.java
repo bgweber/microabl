@@ -77,12 +77,8 @@ public class BehaviorPrototype {
 		if (parameters.length != parameterClasses.size()) {
 			return false;
 		}
-		
-		System.out.println("Matching");
- 
+
 		for (int index=0; index<parameters.length; index++) { 
-			System.out.println(" param: " + parameters[index]);
-			
 			if (!parameterClasses.get(index).isInstance(parameters[index])) {
 				return false; 
 			}

@@ -17,7 +17,7 @@ public class StepPrototype {
 	private StepType stepType; 
 	private String stepName; 	// action name, subgoal name
     
-	private Object[] parameters = new Object[0]; // considered literals, except for BehaviorParameter instances 
+	private Object[] parameters = new Object[0]; // considered literals, except for Variable instances 
 	private StepModifier modifier = StepModifier.None; 
 
 	private int priority = 0;

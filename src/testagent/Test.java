@@ -8,6 +8,7 @@ import abllite.prototype.BehaviorPrototype;
 import abllite.prototype.ConditionPrototype;
 import abllite.prototype.StepPrototype;
 import abllite.prototype.Variable;
+import abllite.prototype.ConditionPrototype.Comparison;
 
 public class Test {   
     
@@ -23,7 +24,7 @@ public class Test {
 //		steps.add(StepPrototype.createSubgoal("manageMovement").setPriority(1)); 
 //		steps.add(StepPrototype.createSpawngoal("detectCollisions").setPriority(3)); 
 		behaviorLibrary.add(BehaviorPrototype.createParallel(ABT.INITIAL_GOAL).setSteps(steps));
- 
+   
 //		steps = new ArrayList<StepPrototype>();
 //		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 150 })); 
 //		steps.add(StepPrototype.createSubgoal("fire").setModifier(StepModifier.Persistent));
@@ -31,38 +32,55 @@ public class Test {
     
 		ArrayList<ConditionPrototype> preconditions = new ArrayList<ConditionPrototype>();
 		preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("x", "playerX").addBinding("y", "playerY"));
-		preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class));
-		   
+		preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).
+				addBinding("name", "chaserName").
+				setWMEVariable("chaser").
+				addTest("name", Comparison.Equals, "Chaser").
+				addTest("x", Comparison.lt, 100). 
+				addTest("x", Comparison.lte, new Variable("playerX")));  
+		preconditions.add(ConditionPrototype.createNegation(BulletWME.class));
+		     
+		 
 		steps = new ArrayList<StepPrototype>();  
-//		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
+		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
 		steps.add(StepPrototype.createSpawngoal("print").setParameters(new Object[] { "Hello spawngoal", new Variable("playerX") }).setPriority(6));
-		steps.add(StepPrototype.createSubgoal("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
-		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 150 })); 
+//		steps.add(StepPrototype.createSubgoal("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
+//		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 150 })); 
 //		steps.add(StepPrototype.createAction("log").setParameters(new Object[] { "Chaser Agent" }).setPriority(4));
 		
 		behaviorLibrary.add(BehaviorPrototype.createSequential("fire").setSteps(steps).setPreconditions(preconditions));
   
 		
-		// behavior with parameters 
-		steps = new ArrayList<StepPrototype>();  
-		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("fireX"), new Variable("fireY") }));  
-
-		behaviorLibrary.add(BehaviorPrototype.createSequential("fire").
-				addParameter(Integer.class, "fireX").
-				addParameter(Integer.class, "fireY"). 
-				setSteps(steps).
-				setPreconditions(preconditions));
- 
-		// behavior that logs an input message 
-		steps = new ArrayList<StepPrototype>();  
-		steps.add(StepPrototype.createAction("log").setParameters(new Object[] { new Variable("message"), new Variable("x") }));  
-		 
-		behaviorLibrary.add(BehaviorPrototype.createSequential("print").
-				addParameter(String.class, "message").
-				addParameter(Integer.class, "x").
-				setSteps(steps).
-				setPreconditions(preconditions));
-		
+//		// behavior with parameters 
+//		steps = new ArrayList<StepPrototype>();  
+//		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("fireX"), new Variable("fireY") }));  
+//
+//		behaviorLibrary.add(BehaviorPrototype.createSequential("fire").
+//				addParameter(Integer.class, "fireX").
+//				addParameter(Integer.class, "fireY"). 
+//				setSteps(steps).
+//				setPreconditions(preconditions));
+// 
+//		// behavior that logs an input message 
+//		steps = new ArrayList<StepPrototype>();  
+//		steps.add(StepPrototype.createAction("log").setParameters(new Object[] { new Variable("message"), new Variable("x") }));  
+//		steps.add(StepPrototype.createSucceedStep());
+//		steps.add(StepPrototype.createFailStep());
+//		 
+//		behaviorLibrary.add(BehaviorPrototype.createSequential("print").
+//				setSpecificity(2).
+//				addParameter(String.class, "message").
+//				addParameter(Integer.class, "x").
+//				setSteps(steps));
+//
+//		steps = new ArrayList<StepPrototype>();  
+//		steps.add(StepPrototype.createSucceedStep());
+//		
+//		behaviorLibrary.add(BehaviorPrototype.createSequential("print").
+//				setSpecificity(1).
+//				addParameter(String.class, "message").
+//				addParameter(Integer.class, "x").
+//				setSteps(steps));
 
 		
 //		steps = new ArrayList<StepPrototype>();
@@ -88,7 +106,7 @@ public class Test {
 		agent.getWorkingMemory().addWME(chaserWME); 
 		agent.getWorkingMemory().dump();
 		
- 		for (int i=0; i<=7; i++) { 
+ 		for (int i=0; i<=6; i++) { 
 			System.out.println("\nABT Cycle " + i);
 			System.out.println("-----------------");
 			agent.printABT();
@@ -103,6 +121,9 @@ public class Test {
 			
 			playerWME.setX(playerWME.getX() + 20);
 			playerWME.setY(playerWME.getY() + 10);
+			  
+			chaserWME.setX(chaserWME.getX() + 10);
+			chaserWME.setY(chaserWME.getY() + 5);
 		}
 				
 		agent.getWorkingMemory().dump();

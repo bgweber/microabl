@@ -34,18 +34,20 @@ public class ABT {
 		rootNodes.add(new GoalNode(INITIAL_GOAL, new Object[0]));
 	}
 
-	public void performDecisionCycle() {
+	public boolean performDecisionCycle() {
 		
-		// tree finished
+		// tree finished?
 		if (rootNodes.size() == 0) {
-			return; 
+			return false; 
 		}
-		 
+ 		 
 		// find completed nodes
 		ArrayList<ABTNode> completed = new ArrayList<ABTNode>();		
 		for (ABTNode root : rootNodes) {
 			findCompletedNodes(root, completed);
 		}
+		 
+		// TODO: tell failures with children to abort 
 		
 //		System.out.println("completed: " + completed);
 		for (ABTNode node : completed) {
@@ -53,9 +55,9 @@ public class ABT {
 			
 			if (parent == null) {
 				rootNodes.remove(node);
- 				
+ 				 
 				if (rootNodes.size() == 0) {
-					return; 
+					return false; 
 				}
 			}  
 			else {  
@@ -63,34 +65,36 @@ public class ABT {
 				parent.childCompleted(node);
 			}
 		}
+		
+		// TODO: context conditions 
  	 
 		// find open nodes
-		ArrayList<ABTNode> available = new ArrayList<ABTNode>();		
+		ArrayList<ABTNode> open = new ArrayList<ABTNode>();		
 		for (ABTNode root : rootNodes) {
-			findOpenNodes(root, available);
+			findOpenNodes(root, open);
 		} 
 		
-		// sort available nodes based on priority   
-		Collections.sort(available, new Comparator<ABTNode>() {
-			public int compare(ABTNode node1, ABTNode node2) {
-
+		// sort open nodes based on priority   
+		Collections.sort(open, new Comparator<ABTNode>() {
+			public int compare(ABTNode node1, ABTNode node2) { 
 				if (node1.getPriority() != node2.getPriority()) {
 					return node2.getPriority() - node1.getPriority();
 				}
 				else {
 					return node1.hashCode() - node2.hashCode();
 				}
-			}
-		});
-
+			} 
+		}); 
+ 
 		// expand open nodes
-		for (ABTNode node : available) {
+		for (ABTNode node : open) {
 			if (expand(node)) {
-				break; 
+				return true;
 			}
 		}
 		
-		// TODO: return result? 
+		// no new nodes were expanded 
+		return false; 
 	}
  	
 	public void findCompletedNodes(ABTNode node, ArrayList<ABTNode> completed) {
@@ -116,9 +120,32 @@ public class ABT {
 		}
 	}
 	
+	public Object getVariable(ABTNode node, String name) {
+
+ 		// get the parent behavior 
+		while (node != null && !(node instanceof BehaviorNode)) {
+			node = node.getParent();
+		}
+
+		if (node == null) {
+			throw new ABTRuntimeError("Step has no parent behavior");  
+		}
+		 
+		return (node != null) ? ((BehaviorNode)node).getVariable(name) : null;
+	}
+ 
+	public Object[] bindVariables(ABTNode node, Object[] parameters) {
+		Object[] executionParameters = new Object[parameters.length];
+ 		 
+		for (int index=0; index<parameters.length; index++) {
+			executionParameters[index] = (parameters[index] instanceof Variable) ? getVariable(node, (((Variable)parameters[index]).getName())) : parameters[index];
+		}
+ 
+		return executionParameters;
+	}
+   
 	public boolean expand(ABTNode node) {
-		System.err.println("Trying to expand: " + node);
-		
+//		System.out.println("Trying to expand: " + node);		
 		
 		// try to expand the goal
 		if (node instanceof GoalNode) {
@@ -136,34 +163,10 @@ public class ABT {
 		else if (node instanceof ModifierNode) {
 			return expandModifier((ModifierNode)node);  
 		} 
-
+ 
 		return false; 
 	}
 
-	public Object getVariable(ABTNode node, String name) {
-
- 		// get the parent behavior 
-		while (node != null && !(node instanceof BehaviorNode)) {
-			node = node.getParent();
-		}
-
-		if (node == null) {
-			throw new ABTRuntimeError("Step has no parent behavior");  
-		}
-		
-		return (node != null) ? ((BehaviorNode)node).getVariable(name) : null;
-	}
- 
-	public Object[] bindVariables(ABTNode node, Object[] parameters) {
-		Object[] executionParameters = new Object[parameters.length];
- 		 
-		for (int index=0; index<parameters.length; index++) {
-			executionParameters[index] = (parameters[index] instanceof Variable) ? getVariable(node, (((Variable)parameters[index]).getName())) : parameters[index];
-		}
- 
-		return executionParameters;
-	}
- 
 	public boolean expandModifier(ModifierNode modifier) {
 		modifier.setStatus(NodeStatus.Executing); 						
 		
@@ -174,7 +177,7 @@ public class ABT {
 		
 		return true;
 	}
-	 
+	  
 	public boolean expandAction(ActionNode action) {
  
 		action.setParameters(bindVariables(action, action.getParameters())); 
@@ -185,7 +188,11 @@ public class ABT {
 
 	public boolean expandParallel(ParallelNode behavior) {
 		behavior.setStatus(NodeStatus.Executing); 						
-  		
+
+		if (behavior.getSteps().size() == 0) {
+			throw new ABTRuntimeError("Behavior has no child steps: " + behavior.getGoalName());
+		}
+
 		for (ABTNode step : behavior.getSteps()) {
 			expandBehaviorStep(behavior, step);
 		}
@@ -195,6 +202,10 @@ public class ABT {
 
 	public boolean expandSequential(SequentialNode behavior) {
 		behavior.setStatus(NodeStatus.Executing); 						
+		
+		if (behavior.getSteps().size() == 0) {
+			throw new ABTRuntimeError("Behavior has no child steps: " + behavior.getGoalName());
+		}
  
 		for (ABTNode step : behavior.getSteps()) {
 			expandBehaviorStep(behavior, step);
@@ -226,29 +237,42 @@ public class ABT {
 
 
 	public boolean expandGoal(GoalNode goal) {
-		System.out.println("Expanding goal: " + goal);
+//		System.out.println("Expanding goal: " + goal);
 		 
-		// bind goal parameters
+		// bind goal parameters (note: spawngoal variables will already be bound) 
 		Object[] goalParameters = bindVariables(goal, goal.getParameters());
 
 		// find match behaviors in the library 
 		ArrayList<BehaviorPrototype> matching = new ArrayList<BehaviorPrototype>();
 		for (BehaviorPrototype prototype : behaviorLibrary) {
 			if (prototype.matchingSignature(goal.getGoalName(), goalParameters)) {
-				matching.add(prototype);
+
+				// dont retry behaviors for the same goal 
+				if (!goal.hasAttempted(prototype)) {
+					matching.add(prototype);
+				}
 			}  
 		}
-
-		// TODO: sort by specificity 
  
+		// sort by specificity  
+		Collections.sort(matching, new Comparator<BehaviorPrototype>() {
+			public int compare(BehaviorPrototype b1, BehaviorPrototype b2) {
+				if (b1.getSpecificity() != b2.getSpecificity()) {
+					return b2.getSpecificity() - b1.getSpecificity();
+				} 
+				else {
+					return b1.hashCode() - b2.hashCode();
+				}
+			}			
+		});
+  
 		// expand the first matching behavior 
 		for (BehaviorPrototype prototype : matching) {
-
-			// match goal parameters to behavior properties  
+ 
+			// match goal parameters to behavior variables 
 			HashMap<String, Object> variables = prototype.bindVariables(goalParameters); 
-			
+			 
 			// check preconditions
-			System.out.println("Preconditions: " + prototype.getPreconditions());
 			if (!checkConditions(variables, prototype.getPreconditions(), 0)) {
 				continue; 
 			}
@@ -257,47 +281,52 @@ public class ABT {
 			BehaviorNode behavior = prototype.isSequential() ? new SequentialNode(prototype, variables) : new ParallelNode(prototype, variables);
 			behavior.setParent(goal);
 			goal.addChild(behavior); 
-			behavior.setPriority(goal.getPriority());
- 
+			goal.attemptingBehavior(prototype);
+ 			
+			behavior.setPriority(goal.getPriority()); 
 			behavior.setVariables(variables);			
 			goal.setStatus(NodeStatus.Executing); 						
 			return true;
-		}
-		 
+		}  
+		  
 		// no matching behaviors found 
+		goal.setStatus(NodeStatus.Failure); 						
 		return false;
 	}
 	
-	private boolean checkConditions(HashMap<String, Object> properties, ArrayList<ConditionPrototype> conditions, int index) {
+	private boolean checkConditions(HashMap<String, Object> variables, ArrayList<ConditionPrototype> conditions, int index) {
  
 		// all conditions are satisfied 
 		if (index == conditions.size()) {
 			return true;
-		}
+		} 
 
 		ConditionPrototype condition = conditions.get(index);
-  
+
 		// check for the existence of a WME 
 		if (condition.isWMECheck()) {
 			  
 			HashSet<WME> wmes = workingMemory.getWMEs(condition.getWMEClass());
 			for (WME wme : wmes) {
 
-				// TODO: check is wme matches conditions
-				 
+				// check if the wme conditions match 
+				if (!condition.testWME(wme, variables)) {
+					continue; 
+				}
+				
 				// bind properties
 				HashMap<String, String> bindings = condition.getBindings();
 				for (String attribute : bindings.keySet()) {
-					properties.put(bindings.get(attribute), wme.getAttribute(attribute));
-				}
-
+					variables.put(bindings.get(attribute), wme.getAttribute(attribute));
+				} 
+  
 				// bind wme instance to a property
-				if (condition.getWMEProperty() != null) {
-					properties.put(condition.getWMEProperty(), wme);
-				}
+				if (condition.getWMEVariable() != null) {
+					variables.put(condition.getWMEVariable(), wme);
+				} 
  				 
 				// recurse!!! 
-				if (checkConditions(properties, conditions, index + 1)) {
+				if (checkConditions(variables, conditions, index + 1)) {
 					return true;
 				}					
 			}
@@ -310,19 +339,21 @@ public class ABT {
 
 			HashSet<WME> wmes = workingMemory.getWMEs(condition.getWMEClass());
 			for (WME wme : wmes) {
-  
-				// TODO: check is wme matches conditions
-
-				// if WME conditions match 
-				return false; 
+				  
+				// fail if conditions match 
+				if (condition.testWME(wme, variables)) {
+					return false; 
+				}
 			}
 
 			// recurse!!! 
-			if (checkConditions(properties, conditions, index + 1)) {
+			if (checkConditions(variables, conditions, index + 1)) {
 				return true;
 			}					
 		}
 
+		// TODO: support mental conditions 
+		
 		Thread.dumpStack();
 		return true;  
 	}

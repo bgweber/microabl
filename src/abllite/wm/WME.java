@@ -13,9 +13,7 @@ public class WME {
 			return getClass().getMethod("get" + attribute.substring(0, 1).toUpperCase() + attribute.substring(1)).invoke(this); 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			throw new ABTRuntimeError(e.getLocalizedMessage());
+			throw new ABTRuntimeError("Invalid attribute: '" + attribute + "' for WME: " + this.getClass().getSimpleName());
 		}
-	}
-  
+	}  
 }
