@@ -14,7 +14,11 @@ public class ActionNode extends ABTNode {
 	public String getActionName() {
 		return actionName;
 	}
-	 
+	  
+	public void setParameters(Object[] parameters) {
+		this.parameters = parameters;
+	}
+	
 	public Object[] getParameters() {
 		return parameters; 
 	}

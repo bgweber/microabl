@@ -32,15 +32,15 @@ public class WorkingMemory {
 						
 			wmeClass = wmeClass.getSuperclass();
 		}		
-	}
+	} 
 	
-	public HashSet<WME> getWMEs(Class wmeClass) {
+	public HashSet<WME> getWMEs(Class<? extends WME> wmeClass) {
 		if (!wmes.containsKey(wmeClass)) {
 			wmes.put(wmeClass, new HashSet<WME>());
 		}
-  
+
 		return wmes.get(wmeClass);
-	}
+	} 
 
 	public void dump() {
 		for (Class wmeClass : wmes.keySet()) {
