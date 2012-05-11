@@ -1,5 +1,7 @@
 package abllite.prototype;
 
+import java.util.ArrayList;
+
 import abllite.abt.ABTNode;
 import abllite.abt.ABTRuntimeError;
 import abllite.abt.ActionNode;
@@ -8,10 +10,11 @@ import abllite.abt.GoalNode;
 import abllite.abt.ModifierNode;
 import abllite.abt.SpawnGoalNode;
 import abllite.abt.SucceedStepNode;
+import abllite.abt.WaitStepNode;
 
 public class StepPrototype {
  
-	public enum StepType { Action, Subgoal, Spawngoal, FailStep, SucceedStep }
+	public enum StepType { Action, Subgoal, Spawngoal, WaitStep, FailStep, SucceedStep }
 	public enum StepModifier { None, Persistent, IgnoreFailure, PersistentWhenSucceeds, PersistentWhenFails } // Effect Only
 
 	private StepType stepType; 
@@ -20,9 +23,11 @@ public class StepPrototype {
 	private Object[] parameters = new Object[0]; // considered literals, except for Variable instances 
 	private StepModifier modifier = StepModifier.None; 
 
-	private int priority = 0;
+	private int priority = 0; 
 	private boolean prioritySpecified = false;
 
+	private ArrayList<ConditionPrototype> waitConditions = new ArrayList<ConditionPrototype>();
+	
 	public StepPrototype(StepType stepType) {
 		this.stepType = stepType;
 	} 
@@ -42,6 +47,12 @@ public class StepPrototype {
 
 	public static StepPrototype createAction(String actionName) {
 		return new StepPrototype(StepType.Action, actionName);
+	}
+ 
+	public static StepPrototype createWaitStep(ArrayList<ConditionPrototype> conditions) {
+		StepPrototype step = new StepPrototype(StepType.WaitStep);
+		step.waitConditions = conditions; 
+		return step;
 	}
 
 	public static StepPrototype createSucceedStep() {
@@ -66,6 +77,10 @@ public class StepPrototype {
 	public StepPrototype setModifier(StepModifier modifier) {
 		this.modifier = modifier;
 		return this;
+	}
+
+	public ArrayList<ConditionPrototype> getWaitConditions() {
+		return waitConditions;
 	}
 	
 	public StepType getStepType() {
@@ -106,6 +121,9 @@ public class StepPrototype {
 			case Spawngoal:
 				node = new SpawnGoalNode(stepName, parameters);
 				break;
+			case WaitStep:
+				node = new WaitStepNode(waitConditions);
+				break; 
 			case SucceedStep:
 				node = new SucceedStepNode();
 				break;

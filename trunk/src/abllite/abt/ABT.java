@@ -15,7 +15,7 @@ import abllite.wm.WME;
 import abllite.wm.WorkingMemory;
 
 public class ABT {
-	
+	 
 	private ArrayList<BehaviorPrototype> behaviorLibrary; 
 	
 	private ActionListener actionListener; 
@@ -41,15 +41,22 @@ public class ABT {
 			return false; 
 		}
  		 
+		// test success conditions and context condtions
+		for (ABTNode root : rootNodes) {
+			testBehaviorCondtions(root);
+		}
+
+		// clear subtrees attached to completed parents 
+		for (ABTNode root : rootNodes) {
+			pruneTree(root);
+		}
+		 
 		// find completed nodes
 		ArrayList<ABTNode> completed = new ArrayList<ABTNode>();		
 		for (ABTNode root : rootNodes) {
 			findCompletedNodes(root, completed);
 		}
-		 
-		// TODO: tell failures with children to abort 
-		
-//		System.out.println("completed: " + completed);
+ 
 		for (ABTNode node : completed) {
 			ABTNode parent = node.getParent();
 			
@@ -65,9 +72,7 @@ public class ABT {
 				parent.childCompleted(node);
 			}
 		}
-		
-		// TODO: context conditions 
- 	 
+
 		// find open nodes
 		ArrayList<ABTNode> open = new ArrayList<ABTNode>();		
 		for (ABTNode root : rootNodes) {
@@ -96,8 +101,57 @@ public class ABT {
 		// no new nodes were expanded 
 		return false; 
 	}
- 	
-	public void findCompletedNodes(ABTNode node, ArrayList<ABTNode> completed) {
+
+	private void testBehaviorCondtions(ABTNode node) {
+		if (node instanceof BehaviorNode && node.isExecuting()) {
+			BehaviorNode behavior = (BehaviorNode)node;
+			 
+			if (behavior.getSuccessConditions().size() > 0) {
+				System.err.println("Testing success conditions");
+				
+				if (checkConditions(behavior.getVariables(), behavior.getSuccessConditions(), 0)) {
+					behavior.setStatus(NodeStatus.Success);
+				}
+			}
+			 
+			if (behavior.getContextConditions().size() > 0) {
+				System.err.println("Testing context conditions");
+				 
+				if (!checkConditions(behavior.getVariables(), behavior.getContextConditions(), 0)) {
+					behavior.setStatus(NodeStatus.Failure);
+				}
+			}
+		}
+		
+		for (ABTNode child : node.getChildren()) {
+			testBehaviorCondtions(child);
+		}			
+	}
+
+	private void pruneTree(ABTNode node) {
+		if (node.isCompleted() && node.getChildren().size() > 0) {
+
+			for (ABTNode child : node.getChildren()) {
+				abortTree(child);
+			}
+			
+			node.clearChildren();
+		}
+		
+		for (ABTNode child : node.getChildren()) {
+			pruneTree(child);
+		}
+	} 
+	 
+	private void abortTree(ABTNode node) {
+		for (ABTNode child : node.getChildren()) {
+			abortTree(child);
+		}
+		
+		System.out.println("Aborting: " + node);
+	}
+
+	private void findCompletedNodes(ABTNode node, ArrayList<ABTNode> completed) {
 
 		if (node.getChildren().size() > 0) {
 			for (ABTNode child : node.getChildren()) {
@@ -110,7 +164,11 @@ public class ABT {
 		
 	}  
 	  
-	public void findOpenNodes(ABTNode node, ArrayList<ABTNode> available) {
+	private void findOpenNodes(ABTNode node, ArrayList<ABTNode> available) {
+		if (node.isSuccess() || node.isFailure()) {
+			return;
+		}
+		
 		if (node.isOpen()) {
 			available.add(node);
 		}
@@ -120,7 +178,7 @@ public class ABT {
 		}
 	}
 	
-	public Object getVariable(ABTNode node, String name) {
+	private Object getVariable(ABTNode node, String name) {
 
  		// get the parent behavior 
 		while (node != null && !(node instanceof BehaviorNode)) {
@@ -134,7 +192,7 @@ public class ABT {
 		return (node != null) ? ((BehaviorNode)node).getVariable(name) : null;
 	}
  
-	public Object[] bindVariables(ABTNode node, Object[] parameters) {
+	private Object[] bindVariables(ABTNode node, Object[] parameters) {
 		Object[] executionParameters = new Object[parameters.length];
  		 
 		for (int index=0; index<parameters.length; index++) {
@@ -144,7 +202,7 @@ public class ABT {
 		return executionParameters;
 	}
    
-	public boolean expand(ABTNode node) {
+	private boolean expand(ABTNode node) {
 //		System.out.println("Trying to expand: " + node);		
 		
 		// try to expand the goal
@@ -163,11 +221,25 @@ public class ABT {
 		else if (node instanceof ModifierNode) {
 			return expandModifier((ModifierNode)node);  
 		} 
+		else if (node instanceof WaitStepNode) {
+			return expandWaitStep((WaitStepNode)node);  
+		} 
  
 		return false; 
 	}
+	
+	private boolean expandWaitStep(WaitStepNode waitStep) {
+ 
+		if (checkConditions(((BehaviorNode)waitStep.getParent()).getVariables(), waitStep.getWaitConditions(), 0)) {
+			waitStep.setStatus(NodeStatus.Success);
+			return true; 
+		}
+		else {
+			return false; 
+		}
+ 	}
 
-	public boolean expandModifier(ModifierNode modifier) {
+	private boolean expandModifier(ModifierNode modifier) {
 		modifier.setStatus(NodeStatus.Executing); 						
 		
 		ABTNode child = modifier.createABTNode();
@@ -178,7 +250,7 @@ public class ABT {
 		return true;
 	}
 	  
-	public boolean expandAction(ActionNode action) {
+	private boolean expandAction(ActionNode action) {
  
 		action.setParameters(bindVariables(action, action.getParameters())); 
 		action.setStatus(NodeStatus.Executing); 						
@@ -186,7 +258,7 @@ public class ABT {
 		return true;
 	}
 
-	public boolean expandParallel(ParallelNode behavior) {
+	private boolean expandParallel(ParallelNode behavior) {
 		behavior.setStatus(NodeStatus.Executing); 						
 
 		if (behavior.getSteps().size() == 0) {
@@ -200,7 +272,7 @@ public class ABT {
 		return true;
 	}
 
-	public boolean expandSequential(SequentialNode behavior) {
+	private boolean expandSequential(SequentialNode behavior) {
 		behavior.setStatus(NodeStatus.Executing); 						
 		
 		if (behavior.getSteps().size() == 0) {
@@ -215,7 +287,7 @@ public class ABT {
 		return true;
 	}
  
-	public void expandBehaviorStep(BehaviorNode behavior, ABTNode step) {		
+	private void expandBehaviorStep(BehaviorNode behavior, ABTNode step) {		
 		if (!step.getPrioritySpecified()) {
 			step.setPriority(behavior.getPriority());
 		}
@@ -235,8 +307,7 @@ public class ABT {
 		}
 	}
 
-
-	public boolean expandGoal(GoalNode goal) {
+	private boolean expandGoal(GoalNode goal) {
 //		System.out.println("Expanding goal: " + goal);
 		 
 		// bind goal parameters (note: spawngoal variables will already be bound) 
@@ -282,7 +353,7 @@ public class ABT {
 			behavior.setParent(goal);
 			goal.addChild(behavior); 
 			goal.attemptingBehavior(prototype);
- 			
+
 			behavior.setPriority(goal.getPriority()); 
 			behavior.setVariables(variables);			
 			goal.setStatus(NodeStatus.Executing); 						
@@ -295,7 +366,7 @@ public class ABT {
 	}
 	
 	private boolean checkConditions(HashMap<String, Object> variables, ArrayList<ConditionPrototype> conditions, int index) {
- 
+  
 		// all conditions are satisfied 
 		if (index == conditions.size()) {
 			return true;
@@ -369,7 +440,7 @@ public class ABT {
 		}
 	}	
 	
-	public void print(ABTNode node, int depth) {
+	private void print(ABTNode node, int depth) {
 		for (int i=0; i<depth; i++) System.out.print("  ");
 		
 		System.out.println("- " + node.toString());

@@ -6,24 +6,26 @@ import abllite.prototype.BehaviorPrototype;
 
 public class ParallelNode extends BehaviorNode {
 
-	int stepsCompleted = 0;
+	private int stepsCompleted = 0;
+	private int numberNeededForSuccess; 
 	
-	public ParallelNode(BehaviorPrototype prototype, HashMap<String, Object> parameters) {
-		super(prototype, parameters);		
+	
+	public ParallelNode(BehaviorPrototype prototype, HashMap<String, Object> variables) {
+		super(prototype, variables);				
+		numberNeededForSuccess = prototype.getNumberNeededForSuccess() > 0 ? prototype.getNumberNeededForSuccess() : steps.size();
 	} 
-	 
-	
+ 
 	public String toString() {
 		return "ParallelNode: " + getGoalName() + " (" + nodeStatus + ") " + getPriority(); 
 	}
-	 
+ 
 	public void childCompleted(ABTNode child) {
 		if (child.isFailure()) {
 			setStatus(NodeStatus.Failure);
 		}  
 		else { 
-			stepsCompleted++;
-			if (stepsCompleted == steps.size()) {
+			stepsCompleted++; 
+			if (stepsCompleted >= numberNeededForSuccess) {
 				setStatus(NodeStatus.Success);
 			} 
 		}

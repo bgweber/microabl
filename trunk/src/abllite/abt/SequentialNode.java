@@ -6,11 +6,11 @@ import abllite.prototype.BehaviorPrototype;
 
 public class SequentialNode extends BehaviorNode {
 
-	public SequentialNode(BehaviorPrototype prototype, HashMap<String, Object> parameters) {
-		super(prototype, parameters);
+	public SequentialNode(BehaviorPrototype prototype, HashMap<String, Object> variables) {
+		super(prototype, variables);
 	}
 	 
-	 
+	  
 	public String toString() {
 		return "SequentialNode: " + getGoalName() + " (" + nodeStatus + ") " + getPriority(); 
 	} 

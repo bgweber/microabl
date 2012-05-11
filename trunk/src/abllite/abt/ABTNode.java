@@ -23,7 +23,7 @@ public class ABTNode {
 	public String toString() {
 		return "ABTNode" + getClass();
 	}
-	
+	 
 	public int getPriority() {
 		return priority;
 	}
@@ -39,6 +39,14 @@ public class ABTNode {
 	
 	public boolean isOpen() {
 		return nodeStatus == NodeStatus.Open;
+	}
+	
+	public void clearChildren() {
+		children.clear();
+	}
+ 
+	public boolean isExecuting() {
+		return nodeStatus == NodeStatus.Executing;
 	}
 
 	public boolean isSuccess() {

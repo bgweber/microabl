@@ -11,18 +11,16 @@ public class BehaviorPrototype {
 	private String goalName; 
 	private ArrayList<StepPrototype> steps = new ArrayList<StepPrototype>();	
 
-	private ArrayList<Class> parameterClasses = new ArrayList(); 
-	private ArrayList<String> parameterNames = new ArrayList(); 
- 
-	private int specificity; 
-	   
-//	private int numberNeededForSuccess;   
-	 
+	private ArrayList<Class> parameterClasses = new ArrayList<Class>(); 
+	private ArrayList<String> parameterNames = new ArrayList<String>(); 
+  
 	private ArrayList<ConditionPrototype> preconditions = new ArrayList<ConditionPrototype>(); 
-//	private ArrayList<Condition> contextConditions; 
-//	private ArrayList<Condition> successConditions;  
- 	
-	 
+	private ArrayList<ConditionPrototype> contextConditions = new ArrayList<ConditionPrototype>(); 
+	private ArrayList<ConditionPrototype> successConditions = new ArrayList<ConditionPrototype>(); 
+
+	private int specificity = 0; 
+	private int numberNeededForSuccess = 0;   
+
     public BehaviorPrototype(BehaviorType behaviorType, String goalName) {
     	this.behaviorType = behaviorType;
     	this.goalName = goalName; 
@@ -41,6 +39,11 @@ public class BehaviorPrototype {
     	return this; 
     }
  
+    public BehaviorPrototype setNumberNeededForSuccess(int numberNeededForSuccess) {
+    	this.numberNeededForSuccess = numberNeededForSuccess;
+    	return this; 
+    }
+
     public BehaviorPrototype addParameter(Class type, String name) {
     	parameterClasses.add(type);
     	parameterNames.add(name); 
@@ -52,9 +55,23 @@ public class BehaviorPrototype {
     	return this; 
     }
 
+    public BehaviorPrototype setContextConditions(ArrayList<ConditionPrototype> contextConditions) {
+    	this.contextConditions = contextConditions;
+    	return this; 
+    }
+  
+    public BehaviorPrototype setSuccessConditions(ArrayList<ConditionPrototype> successConditions) {
+    	this.successConditions = successConditions;
+    	return this;   
+    }
+
     public BehaviorPrototype setSpecificity(int specificity) {
     	this.specificity = specificity;
     	return this; 
+    }
+     
+    public int getNumberNeededForSuccess() {
+    	return numberNeededForSuccess;
     }
 
 	public String getGoalName() {
@@ -110,5 +127,13 @@ public class BehaviorPrototype {
 	public ArrayList<ConditionPrototype> getPreconditions() {
 		return preconditions;
 	}
+	
+	public ArrayList<ConditionPrototype> getContextConditions() {
+		return contextConditions;
+	}
+	
+	public ArrayList<ConditionPrototype> getsuccessConditions() {
+		return successConditions;
+	} 
 }
  

@@ -16,14 +16,21 @@ public class Test {
    
 		TestScheduler scheduler = new TestScheduler();
 		ArrayList<BehaviorPrototype> behaviorLibrary = new ArrayList<BehaviorPrototype>();
-   
+
+		
+		ArrayList<ConditionPrototype> contextConditions = new ArrayList<ConditionPrototype>();
+		contextConditions.add(ConditionPrototype.createNegation(BulletWME.class));
+
+		ArrayList<ConditionPrototype> successConditions = new ArrayList<ConditionPrototype>();
+		successConditions.add(ConditionPrototype.createWMECondition(BulletWME.class));
+ 
 		ArrayList<StepPrototype> steps = new ArrayList<StepPrototype>(); 
 //		steps.add(StepPrototype.createAction("log").setParameters(new Object[] { "Chaser Agent" }).setPriority(4));
 //		steps.add(StepPrototype.createSubgoal("manageFiring").setPriority(2));  
 		steps.add(StepPrototype.createSubgoal("fire").setPriority(2));  
 //		steps.add(StepPrototype.createSubgoal("manageMovement").setPriority(1)); 
 //		steps.add(StepPrototype.createSpawngoal("detectCollisions").setPriority(3)); 
-		behaviorLibrary.add(BehaviorPrototype.createParallel(ABT.INITIAL_GOAL).setSteps(steps));
+		behaviorLibrary.add(BehaviorPrototype.createParallel(ABT.INITIAL_GOAL).setSuccessConditions(successConditions).setSteps(steps));
    
 //		steps = new ArrayList<StepPrototype>();
 //		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 150 })); 
@@ -39,9 +46,13 @@ public class Test {
 				addTest("x", Comparison.lt, 100). 
 				addTest("x", Comparison.lte, new Variable("playerX")));  
 		preconditions.add(ConditionPrototype.createNegation(BulletWME.class));
-		     
-		 
+ 
+		
+		ArrayList<ConditionPrototype> waitConditions = new ArrayList<ConditionPrototype>();
+		waitConditions.add(ConditionPrototype.createWMECondition(BulletWME.class));
+ 		 
 		steps = new ArrayList<StepPrototype>();  
+		steps.add(StepPrototype.createWaitStep(waitConditions));  
 		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
 		steps.add(StepPrototype.createSpawngoal("print").setParameters(new Object[] { "Hello spawngoal", new Variable("playerX") }).setPriority(6));
 //		steps.add(StepPrototype.createSubgoal("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
@@ -106,11 +117,13 @@ public class Test {
 		agent.getWorkingMemory().addWME(chaserWME); 
 		agent.getWorkingMemory().dump();
 		
- 		for (int i=0; i<=6; i++) { 
+		BulletWME bullet = new BulletWME();
+		
+ 		for (int i=0; i<=10; i++) { 
 			System.out.println("\nABT Cycle " + i);
 			System.out.println("-----------------");
 			agent.printABT();
-	 
+	  
 			System.out.println();
 			agent.tick();
  
@@ -118,6 +131,8 @@ public class Test {
 				Thread.sleep(100);
 			}
 			catch (Exception e) {}
+		
+			if (i==5) agent.getWorkingMemory().addWME(bullet);
 			
 			playerWME.setX(playerWME.getX() + 20);
 			playerWME.setY(playerWME.getY() + 10);
