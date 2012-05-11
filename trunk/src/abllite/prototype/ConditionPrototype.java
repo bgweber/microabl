@@ -30,6 +30,8 @@ public class ConditionPrototype {
 	private String wmeVariable = null;
 	private HashMap<String, String> bindings = new HashMap<String, String>(); 
 	private ArrayList<Test> tests = new ArrayList<Test>();
+	
+	private String methodName; 
 		
 	public ConditionPrototype(ConditionType type) {
 		this.type = type;
@@ -47,7 +49,11 @@ public class ConditionPrototype {
 	public static ConditionPrototype createNegation(Class wmeClass) {
 		return new ConditionPrototype(ConditionType.Negation, wmeClass); 
 	} 
-	
+  
+	public static ConditionPrototype createMental(Class wmeClass) { 
+		return new ConditionPrototype(ConditionType.Mental, wmeClass); 
+	}
+
 	public ConditionPrototype addBinding(String attribute, String parameter) {
 		bindings.put(attribute, parameter);
 		return this;
@@ -62,7 +68,16 @@ public class ConditionPrototype {
 		this.wmeVariable = wmeVariable;
 		return this; 
 	} 
-   
+	 
+	public ConditionPrototype setMethodName(String methodName) {
+		this.methodName = methodName;
+		return this; 
+	} 
+    
+	public String getMethodName() {
+		return methodName;
+	}
+	
 	public String getWMEVariable() {
 		return wmeVariable; 
 	}

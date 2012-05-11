@@ -41,11 +41,11 @@ public class ABT {
 			return false; 
 		}
  		 
-		// test success conditions and context condtions
+		// test success conditions and context conditions
 		for (ABTNode root : rootNodes) {
 			testBehaviorCondtions(root);
 		}
-
+ 
 		// clear subtrees attached to completed parents 
 		for (ABTNode root : rootNodes) {
 			pruneTree(root);
@@ -107,16 +107,12 @@ public class ABT {
 			BehaviorNode behavior = (BehaviorNode)node;
 			 
 			if (behavior.getSuccessConditions().size() > 0) {
-				System.err.println("Testing success conditions");
-				
 				if (checkConditions(behavior.getVariables(), behavior.getSuccessConditions(), 0)) {
 					behavior.setStatus(NodeStatus.Success);
 				}
 			}
-			 
+ 			 
 			if (behavior.getContextConditions().size() > 0) {
-				System.err.println("Testing context conditions");
-				 
 				if (!checkConditions(behavior.getVariables(), behavior.getContextConditions(), 0)) {
 					behavior.setStatus(NodeStatus.Failure);
 				}
@@ -146,9 +142,11 @@ public class ABT {
 	private void abortTree(ABTNode node) {
 		for (ABTNode child : node.getChildren()) {
 			abortTree(child);
-		}
+		} 
 		
-		System.out.println("Aborting: " + node);
+		if (node instanceof ActionNode) {
+			this.actionListener.abort((ActionNode)node); 
+		}
 	}
 
 	private void findCompletedNodes(ABTNode node, ArrayList<ABTNode> completed) {
@@ -373,10 +371,10 @@ public class ABT {
 		} 
 
 		ConditionPrototype condition = conditions.get(index);
-
+ 
 		// check for the existence of a WME 
 		if (condition.isWMECheck()) {
-			  
+ 			  
 			HashSet<WME> wmes = workingMemory.getWMEs(condition.getWMEClass());
 			for (WME wme : wmes) {
 
@@ -416,17 +414,20 @@ public class ABT {
 					return false; 
 				}
 			}
-
+  
 			// recurse!!! 
-			if (checkConditions(variables, conditions, index + 1)) {
-				return true;
-			}					
+			return checkConditions(variables, conditions, index + 1);
 		}
-
-		// TODO: support mental conditions 
-		
-		Thread.dumpStack();
-		return true;  
+		// mental condition 
+		else {
+			// TODO: support mental conditions 
+			String method = condition.getMethodName();
+			System.err.println(method);
+			
+//			bindVariables(node, parameters)
+			
+			return true;  
+		}
 	}
 
 	public void printABT() {

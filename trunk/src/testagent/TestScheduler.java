@@ -31,7 +31,8 @@ public class TestScheduler implements ActionListener {
 			action.setStatus(NodeStatus.Success);
 		}
 	}
-	
+	 
 	public void abort(ActionNode action) {
+		System.err.println("Aborting action: " + action.getActionName());
 	}
 }
