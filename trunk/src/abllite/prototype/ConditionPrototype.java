@@ -3,6 +3,7 @@ package abllite.prototype;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import abllite.abt.ABTRuntimeError;
 import abllite.wm.WME;
  
 
@@ -30,8 +31,10 @@ public class ConditionPrototype {
 	private String wmeVariable = null;
 	private HashMap<String, String> bindings = new HashMap<String, String>(); 
 	private ArrayList<Test> tests = new ArrayList<Test>();
-	
+
+	// mental conditions
 	private String methodName; 
+	private Object[] methodParameters = new Object[0]; // considered literals, except for Variable instances 
 		
 	public ConditionPrototype(ConditionType type) {
 		this.type = type;
@@ -67,15 +70,24 @@ public class ConditionPrototype {
 	public ConditionPrototype setWMEVariable(String wmeVariable) {
 		this.wmeVariable = wmeVariable;
 		return this; 
-	} 
+	}  
 	 
 	public ConditionPrototype setMethodName(String methodName) {
 		this.methodName = methodName;
 		return this; 
 	} 
-    
+	 
+	public ConditionPrototype setMethodParameters(Object[] parameters) {
+		this.methodParameters = parameters;
+		return this;
+	}     
+	
 	public String getMethodName() {
 		return methodName;
+	}
+
+	public Object[] getMethodParameters() {
+		return methodParameters;
 	}
 	
 	public String getWMEVariable() {
@@ -97,7 +109,7 @@ public class ConditionPrototype {
 	public HashMap<String, String> getBindings() {
 		return bindings;
 	}
-	
+		
 	public boolean testWME(WME wme, HashMap<String, Object> variables) {		
 
 		for (Test test : tests) {
@@ -139,6 +151,43 @@ public class ConditionPrototype {
 		
 		return true;
 	}
+
+	public boolean execute(HashMap<String, Object> variables) {
+		
+		// bind parameters 
+		Object[] parameters = new Object[0];
+		if (methodParameters != null && methodParameters.length > 0) {
+			parameters = new Object[methodParameters.length];
+
+			for (int index=0; index<methodParameters.length; index++) { 
+				parameters[index] = (methodParameters[index] instanceof Variable) ? variables.get(((Variable)methodParameters[index]).getName()) : methodParameters[index];
+			}
+		}
+		 
+		// look up parameter classes 
+		Class[] classes = new Class[parameters .length];			
+		for (int i=0; i<parameters .length; i++) {
+			classes[i] = parameters [i].getClass();
+		}
+ 
+		// invoke the method 
+		try {
+			Object result = wmeClass.getMethod(methodName, classes).invoke(null, parameters);
+			if (result.equals(true)) {
+				return true;
+			}
+			else if (result.equals(false)) {
+				return false;
+			}
+			else {
+				throw new ABTRuntimeError("Mental condition does not return a boolean result: " + methodName);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace(); 
+			throw new ABTRuntimeError("Mental condition failed: " + e.getMessage());
+		}
+	} 
  
 	private final boolean testEq(Object wmeValue, Object conditionValue) {
 

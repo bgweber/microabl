@@ -16,4 +16,16 @@ public class WME {
 			throw new ABTRuntimeError("Invalid attribute: '" + attribute + "' for WME: " + this.getClass().getSimpleName());
 		}
 	}  
+	
+	
+//	public void checkMentalCondition(String method) {
+//		try {
+//			System.err.println("Method: " + method);
+//			getClass().getMethod("method"); 
+//			
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

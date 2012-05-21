@@ -7,27 +7,35 @@ import abllite.abt.ABTRuntimeError;
 import abllite.abt.ActionNode;
 import abllite.abt.FailStepNode;
 import abllite.abt.GoalNode;
+import abllite.abt.MentalActNode;
 import abllite.abt.ModifierNode;
 import abllite.abt.SpawnGoalNode;
 import abllite.abt.SucceedStepNode;
 import abllite.abt.WaitStepNode;
 
 public class StepPrototype {
- 
-	public enum StepType { Action, Subgoal, Spawngoal, WaitStep, FailStep, SucceedStep }
+
+	// TODO: throw exceptions for setting wrong parameters for step types 
+	
+	public enum StepType { Action, Subgoal, Spawngoal, WaitStep, FailStep, SucceedStep, MentalAct }
 	public enum StepModifier { None, Persistent, IgnoreFailure, PersistentWhenSucceeds, PersistentWhenFails } // Effect Only
 
 	private StepType stepType; 
 	private String stepName; 	// action name, subgoal name
-    
+     
 	private Object[] parameters = new Object[0]; // considered literals, except for Variable instances 
 	private StepModifier modifier = StepModifier.None; 
 
 	private int priority = 0; 
 	private boolean prioritySpecified = false;
 
+	// wait step 
 	private ArrayList<ConditionPrototype> waitConditions = new ArrayList<ConditionPrototype>();
-	
+
+	// mental act 
+	private Class actionClass; 
+	private String resultBinding; 
+
 	public StepPrototype(StepType stepType) {
 		this.stepType = stepType;
 	} 
@@ -36,7 +44,12 @@ public class StepPrototype {
 		this(stepType);
 		this.stepName = stepName;
 	} 
-   
+
+	public StepPrototype(StepType stepType, Class actionName, String stepName) {
+		this(stepType, stepName);
+		this.actionClass = actionName; 
+	}
+	
 	public static StepPrototype createSubgoal(String goalName) {
 		return new StepPrototype(StepType.Subgoal, goalName);
 	}
@@ -47,6 +60,10 @@ public class StepPrototype {
 
 	public static StepPrototype createAction(String actionName) {
 		return new StepPrototype(StepType.Action, actionName);
+	}
+  
+	public static StepPrototype createMentalAct(Class actionClass, String methodName) {
+		return new StepPrototype(StepType.MentalAct, actionClass, methodName);
 	}
  
 	public static StepPrototype createWaitStep(ArrayList<ConditionPrototype> conditions) {
@@ -62,6 +79,11 @@ public class StepPrototype {
 	public static StepPrototype createFailStep() {
 		return new StepPrototype(StepType.FailStep);
 	}
+	 
+	public StepPrototype setResultBinding(String resultBinding) {
+		this.resultBinding = resultBinding;
+		return this;
+	} 
 
 	public StepPrototype setParameters(Object[] parameters) {
 		this.parameters = parameters;
@@ -130,8 +152,11 @@ public class StepPrototype {
 			case FailStep:
 				node= new FailStepNode();
 				break; 
-			}			
-			
+			case MentalAct:
+				node = new MentalActNode(actionClass, stepName, parameters, resultBinding);
+				break;
+			}			 
+
 			if (node != null) {
 				if (prioritySpecified) {
 					node.setPriority(priority);

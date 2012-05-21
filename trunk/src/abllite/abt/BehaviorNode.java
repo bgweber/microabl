@@ -55,6 +55,10 @@ public class BehaviorNode extends ABTNode {
 		
 		return variables.get(name);
 	}
+	 
+	public void setVariable(String name, Object value) {
+		variables.put(name, value); 
+	}
  	    
 	public void setVariables(Map<String, Object> variables) {
 		this.variables.putAll(variables);

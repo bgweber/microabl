@@ -11,6 +11,7 @@ import abllite.abt.ABTRuntimeError;
 import abllite.abt.ActionNode;
 import abllite.abt.BehaviorNode;
 import abllite.abt.GoalNode;
+import abllite.abt.MentalActNode;
 import abllite.abt.ModifierNode;
 import abllite.abt.ParallelNode;
 import abllite.abt.SequentialNode;
@@ -189,7 +190,21 @@ public class Agent {
 			findOpenNodes(child, available);
 		}
 	}
+
+	private void setVariable(ABTNode node, String name, Object value) {
 	
+ 		// get the parent behavior 
+		while (node != null && !(node instanceof BehaviorNode)) {
+			node = node.getParent();
+		}
+		
+		if (node == null) {
+			throw new ABTRuntimeError("Step has no parent behavior");  
+		}
+ 	 	 
+		((BehaviorNode)node).setVariable(name, value);
+	}
+  
 	private Object getVariable(ABTNode node, String name) {
 
  		// get the parent behavior 
@@ -201,7 +216,7 @@ public class Agent {
 			throw new ABTRuntimeError("Step has no parent behavior");  
 		}
 		 
-		return (node != null) ? ((BehaviorNode)node).getVariable(name) : null;
+		return ((BehaviorNode)node).getVariable(name);
 	}
  
 	private Object[] bindVariables(ABTNode node, Object[] parameters) {
@@ -236,8 +251,22 @@ public class Agent {
 		else if (node instanceof WaitStepNode) {
 			return expandWaitStep((WaitStepNode)node);  
 		} 
+		else if (node instanceof MentalActNode) {
+			return expandMentalAct((MentalActNode)node);  
+		} 
  
 		return false; 
+	}
+
+	private boolean expandMentalAct(MentalActNode mentalAct) {
+		
+		mentalAct.execute(bindVariables(mentalAct, mentalAct.getParameters()));
+
+		if (mentalAct.getResultBinding() != null) {
+			setVariable(mentalAct, mentalAct.getResultBinding(), mentalAct.getResult()); 			
+		}
+
+		return true; 
 	}
 	
 	private boolean expandWaitStep(WaitStepNode waitStep) {
@@ -431,16 +460,16 @@ public class Agent {
   
 			// recurse!!! 
 			return checkConditions(variables, conditions, index + 1);
-		}
+		}  
 		// mental condition 
 		else {
-			// TODO: support mental conditions 
-			String method = condition.getMethodName();
-			System.err.println(method);
 			
-//			bindVariables(node, parameters)
-			
-			return true;  
+			if (condition.execute(variables)) {
+				return checkConditions(variables, conditions, index + 1);
+			}
+			else {
+				return false; 
+			}
 		}
 	}
 
