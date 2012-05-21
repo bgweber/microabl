@@ -29,6 +29,15 @@ public class ChaserWME extends WME {
 	}
 	
 	public String getName() {
-		return "Chaser"; 
+		return "Chaser";  
+	} 
+ 	  
+	public static void doStuff(Integer x) {
+		System.err.println("Do stuff invoked! " + x);
+	}
+	
+	public static boolean validTrajectory(String message, Integer x) {
+		System.err.println("I was called!: " + message + "  " + x);
+		return true; 
 	}
 }

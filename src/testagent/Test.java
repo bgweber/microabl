@@ -44,14 +44,15 @@ public class Test {
 				setWMEVariable("chaser").
 				addTest("name", Comparison.Equals, "Chaser").
 				addTest("x", Comparison.lt, 100). 
-				addTest("x", Comparison.lte, new Variable("playerX")));  
+				addTest("x", Comparison.lte, new Variable("playerX")));   
 		preconditions.add(ConditionPrototype.createNegation(BulletWME.class));	
-		preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("validTrajectory"));
+		preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("validTrajectory").setMethodParameters(new Object[] { "Hello", new Variable("playerX") }));
 		
 		ArrayList<ConditionPrototype> waitConditions = new ArrayList<ConditionPrototype>();
 		waitConditions.add(ConditionPrototype.createWMECondition(BulletWME.class));
- 		 
+  		  
 		steps = new ArrayList<StepPrototype>();  
+		steps.add(StepPrototype.createMentalAct(ChaserWME.class, "doStuff").setPriority(4).setParameters(new Object[] { new Variable("playerX") } ));
 		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 450 })); 
 //		steps.add(StepPrototype.createWaitStep(waitConditions));  
 		steps.add(StepPrototype.createAction("fire").setParameters(new Object[] { new Variable("playerX"), new Variable("playerY") }));  
