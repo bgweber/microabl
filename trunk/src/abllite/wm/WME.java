@@ -1,9 +1,19 @@
 package abllite.wm;
 
 import abllite.abt.ABTRuntimeError;
-
+/**
+ * Base class for objects added to working memory. 
+ */
 public class WME {
 
+	/**
+	 * Invokes the getter for the given attribute. 
+	 * Note: Uses Java bean naming conventions. (e.g. "name" invokes getName() ) 
+	 * 
+	 * Throw an error if there is not a getter for the specified attribute. 
+	 * 
+	 * @return the getter result
+	 */
 	public Object getAttribute(String attribute) {
 		try { 
 			if (attribute.length() == 0) {
@@ -16,16 +26,4 @@ public class WME {
 			throw new ABTRuntimeError("Invalid attribute: '" + attribute + "' for WME: " + this.getClass().getSimpleName());
 		}
 	}  
-	
-	
-//	public void checkMentalCondition(String method) {
-//		try {
-//			System.err.println("Method: " + method);
-//			getClass().getMethod("method"); 
-//			
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 }
