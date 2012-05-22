@@ -1,32 +1,58 @@
 package abllite.abt;
 
 import java.util.ArrayList;
+/**
+ * Base class for nodes in the ABT. 
+ * 
+ * Node statuses: 
+ *  Open: node is available for expansion 
+ *  Executing: node is currently executing 
+ *  Success: node completed and succeeded 
+ *  Failure: node completed and failed 
+ */
+public abstract class ABTNode {
 
-public class ABTNode {
-	
+	/** possible status for a node */ 
 	public enum NodeStatus { Open, Executing, Success, Failure }
-
+ 
+	/** status of the node */
 	protected NodeStatus nodeStatus = NodeStatus.Open;
 	
+	/** the node parent (null if a root-level goal) */ 
 	private ABTNode parent; 
-	
+
+	/** priority of the node */
 	private int priority;
+
+	/** specifies if priority has been assigned for this node. Defaults to false, which inherits parent priority */ 
 	private boolean prioritySpecified = false;
 	
+	/** child nodes (for goals this is a single behavior, for behaviors it is set of steps) */ 
 	private ArrayList<ABTNode> children = new ArrayList<ABTNode>(); 
 	
-	
-	public ArrayList<ABTNode> getChildren() {
+	/** Informs the node that a child has completed. Base implementation does nothing. */
+	public void childCompleted(ABTNode node) {		
+	}
+
+	public int getNumChildren() {
+		return children.size();
+	}
+  
+	public Iterable<ABTNode> getChildren() {
 		return children;
 	}
-	
-	public String toString() {
-		return "ABTNode" + getClass();
-	}
 	 
+	public void removeChild(ABTNode child) {
+		children.remove(child);
+	}
+
+	public void clearChildren() {
+		children.clear();
+	}
+ 
 	public int getPriority() {
 		return priority;
-	}
+	} 
 	
 	public void setPriority(int priority) {
 		this.priority = priority;
@@ -40,11 +66,7 @@ public class ABTNode {
 	public boolean isOpen() {
 		return nodeStatus == NodeStatus.Open;
 	}
-	
-	public void clearChildren() {
-		children.clear();
-	}
- 
+	 
 	public boolean isExecuting() {
 		return nodeStatus == NodeStatus.Executing;
 	}
@@ -77,9 +99,8 @@ public class ABTNode {
 		return parent;
 	}
 	
-	public void childCompleted(ABTNode node) {
-		System.err.println(getClass());
-		Thread.dumpStack();		
+	public String toString() {
+		return "ABTNode" + getClass();
 	}
 }
  

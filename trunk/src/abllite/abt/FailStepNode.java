@@ -1,7 +1,12 @@
 package abllite.abt;
-
+/**
+ * Represents a failure step. 
+ */
 public class FailStepNode extends ABTNode {
 
+	/**
+	 * Immediately set status to failure. 
+	 */
 	public FailStepNode() {
 		setStatus(NodeStatus.Failure);
 	}
