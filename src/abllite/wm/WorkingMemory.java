@@ -60,8 +60,10 @@ public class WorkingMemory {
 	 * Prints everything in working memory. 
 	 */
 	public void dump() {
+		System.out.println("Working Memory");
+		
 		for (Class<? extends WME> wmeClass : wmes.keySet()) {
-			System.out.println(wmeClass.getSimpleName() + ": " + wmes.get(wmeClass));
+			System.out.println("  " + wmeClass.getSimpleName() + ": " + wmes.get(wmeClass));
 		}
 	}
 }
