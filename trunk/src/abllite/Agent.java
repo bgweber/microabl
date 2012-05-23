@@ -83,7 +83,7 @@ public class Agent {
 	public Agent(ArrayList<BehaviorPrototype> behaviorLibrary, ActionListener actionListener) {
 		this.behaviorLibrary = behaviorLibrary;
 		this.actionListener = actionListener;		
-  		  
+
 		rootNodes.add(new GoalNode(INITIAL_GOAL, new Object[0]));
 	}
 
@@ -103,14 +103,13 @@ public class Agent {
 	 *  4. Open nodes are retrieved.
 	 *  5. The highest priority open node is expanded. 
 	 *  
-	 * @return true if the ABT was modified 
+	 * @return true if the ABT was expanded 
 	 */
 	public boolean update() {
-		boolean treeModified = false; 
 		
 		// tree finished?
 		if (rootNodes.size() == 0) {
-			return treeModified; 
+			return false; 
 		} 
   		 
 		// 1. test success conditions and context conditions
@@ -130,14 +129,13 @@ public class Agent {
 		}
   
 		for (ABTNode node : completed) {
-			treeModified = true;
 			ABTNode parent = node.getParent();
 			
 			if (parent == null) {
 				rootNodes.remove(node);
  				 
 				if (rootNodes.size() == 0) {
-					return treeModified; 
+					return false; 
 				}
 			}  
 			else {  
@@ -162,7 +160,7 @@ public class Agent {
 		}
 		
 		// no new nodes were expanded 
-		return treeModified; 
+		return false; 
 	}
  
 	/**
