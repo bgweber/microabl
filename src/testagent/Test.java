@@ -120,12 +120,12 @@ public class Test {
 		
 		BulletWME bullet = new BulletWME();
 		
- 		for (int i=0; i<=5; i++) { 
-//			System.out.println("\nABT Cycle " + i);
-//			System.out.println("-----------------");
-//			agent.printABT();
+ 		for (int i=0; i<=10; i++) { 
+			System.out.println("\nABT Cycle " + i);
+			System.out.println("-----------------");
+			agent.printABT();
 	  
-//			System.out.println();
+			System.out.println();
 			agent.update();
  
 			try {
