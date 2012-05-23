@@ -1,20 +1,20 @@
 package testagent;
 
-import abllite.abt.ActionNode;
-import abllite.abt.ABTNode.NodeStatus;
-import abllite.action.ActionListener;
+import microabl.ActionListener;
+import microabl.abt.ActionNode;
+import microabl.abt.ABTNode.NodeStatus;
 
 public class TestScheduler implements ActionListener {
 
 	public void execute(final ActionNode action) {
 		System.out.println("Executing action: " + action.getActionName());
-		for (Object p : action.getParameters()) {
+		for (Object p : action.getExecutionParameters()) {
 			System.out.println("  param: " + p);
 		}
 		
-		
+		 
 		if (action.getActionName().equals("WaitMS")) {
-			final int timeout = (Integer)action.getParameters()[0];
+			final int timeout = (Integer)action.getExecutionParameters()[0];
 			
 			new Thread() {
 				public void run() {
@@ -34,5 +34,9 @@ public class TestScheduler implements ActionListener {
 	 
 	public void abort(ActionNode action) {
 		System.err.println("Aborting action: " + action.getActionName());
+	}
+	
+	public void onUpdate(ActionNode action) {
+		
 	}
 }

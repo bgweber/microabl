@@ -1,6 +1,6 @@
 package testagent;
 
-import abllite.wm.WME;
+import microabl.wm.WME;
 
 public class PlayerWME extends WME {
  
