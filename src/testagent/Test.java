@@ -2,13 +2,12 @@ package testagent;
 
 import java.util.ArrayList;
 
-import abllite.Agent;
-import abllite.abt.ABT;
-import abllite.prototype.BehaviorPrototype;
-import abllite.prototype.ConditionPrototype;
-import abllite.prototype.StepPrototype;
-import abllite.prototype.Variable;
-import abllite.prototype.ConditionPrototype.Comparison;
+import microabl.Agent;
+import microabl.prototype.BehaviorPrototype;
+import microabl.prototype.ConditionPrototype;
+import microabl.prototype.StepPrototype;
+import microabl.prototype.Variable;
+import microabl.prototype.ConditionPrototype.Comparison;
 
 public class Test {   
     
@@ -30,7 +29,7 @@ public class Test {
 		steps.add(StepPrototype.createSubgoal("fire").setPriority(2));  
 //		steps.add(StepPrototype.createSubgoal("manageMovement").setPriority(1)); 
 //		steps.add(StepPrototype.createSpawngoal("detectCollisions").setPriority(3)); 
-		behaviorLibrary.add(BehaviorPrototype.createParallel(ABT.INITIAL_GOAL).setSuccessConditions(successConditions).setSteps(steps));
+		behaviorLibrary.add(BehaviorPrototype.createParallel(Agent.INITIAL_GOAL).setSuccessConditions(successConditions).setSteps(steps));
    
 //		steps = new ArrayList<StepPrototype>();
 //		steps.add(StepPrototype.createAction("WaitMS").setParameters(new Object[] { 150 })); 
@@ -117,17 +116,17 @@ public class Test {
 		ChaserWME chaserWME = new ChaserWME();
 		agent.getWorkingMemory().addWME(playerWME); 
 		agent.getWorkingMemory().addWME(chaserWME); 
-		agent.getWorkingMemory().dump();
+//		agent.getWorkingMemory().dump();
 		
 		BulletWME bullet = new BulletWME();
 		
  		for (int i=0; i<=5; i++) { 
-			System.out.println("\nABT Cycle " + i);
-			System.out.println("-----------------");
-			agent.printABT();
+//			System.out.println("\nABT Cycle " + i);
+//			System.out.println("-----------------");
+//			agent.printABT();
 	  
-			System.out.println();
-			agent.tick();
+//			System.out.println();
+			agent.update();
  
 			try {
 				Thread.sleep(100);
@@ -143,6 +142,6 @@ public class Test {
 			chaserWME.setY(chaserWME.getY() + 5);
 		}
 				
-		agent.getWorkingMemory().dump();
+///		agent.getWorkingMemory().dump();
 	}
 }
