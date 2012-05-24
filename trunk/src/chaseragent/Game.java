@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import microabl.ABTViewer;
 /**
  *  Simple "game" for showing how to interface an ABL agent. 
  */
@@ -64,6 +66,11 @@ public class Game extends JPanel implements KeyListener {
 	
 	/** the ABL agent */
 	private ChaserAgent agent; 
+	
+	private ABTViewer abtViewer; 
+	
+	private boolean showViewer = true; 
+	
 
 	/** 
 	 * Starts the game.
@@ -78,18 +85,32 @@ public class Game extends JPanel implements KeyListener {
 	private Game() {
 		agent = new ChaserAgent(this);
 		
+		if (showViewer) {
+			abtViewer = new ABTViewer(agent.getAgent());
+		}
+		
 		// spawn an update thread
 		new Thread() {
 			public void run() {
 				setName("Game Update Thread");
 				
 				while (true) {
-					try {
-						agent.update();
+					try { 
+						if (showViewer) {
+							synchronized (agent.getAgent()) {
+								agent.update();
+							}
+							
+							abtViewer.repaint();
+						}
+						else {
+							agent.update();
+						}
+ 						 
 						updateLocations();
 						updateBullets();
 						repaint();
-						Thread.sleep(50);
+						Thread.sleep(100);
 					}
 					catch (Exception e) {
 						e.printStackTrace();

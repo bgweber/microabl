@@ -55,6 +55,10 @@ public class ChaserAgent implements ActionListener {
 		agent.getWorkingMemory().addWME(player);		
 	}
 	
+	public Agent getAgent() {
+		return agent; 
+	}
+	
 	public ArrayList<BehaviorPrototype> getBehaviorLibrary() {
 		ArrayList<BehaviorPrototype> behaviorLibrary = new ArrayList<BehaviorPrototype>();
 
@@ -132,7 +136,7 @@ public class ChaserAgent implements ActionListener {
 		preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("y", "playerY")); 
 		preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("greaterThanSum").setMethodParameters(
 				new Object[] { new Variable("chaserY"), new Variable("playerY"), Game.ChaserSpeed} ));
-
+ 
 		steps = new ArrayList<StepPrototype>();  
 		steps.add(StepPrototype.createAction(MoveUpAction));  
 		behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(3).setSteps(steps).setPreconditions(preconditions)); 		

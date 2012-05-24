@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import microabl.abt.ABTNode;
 import microabl.abt.ABTRuntimeError;
@@ -200,7 +201,11 @@ public class Agent {
 		// no new nodes were expanded 
 		return false; 
 	}
- 
+
+	public Iterable<ABTNode> getRoots() {
+		return rootNodes;
+	}
+
 	/**
 	 * Notify executing actions that a decision cycle is being performed. 
 	 */
