@@ -6,7 +6,7 @@ MicroABL supports a subset of ABL features. One of the main limitations is a lac
 
 = Behaviors =
 
-Behaviors are defined by the BehaviorPrototype class, which represent an ABL behavior. The following behavior types are supported:
+Behaviors are defined by the `BehaviorPrototype` class, which represent an ABL behavior. The following behavior types are supported:
   * *Sequential:* steps are added to the ABT one at a time.
   * *Parallel:* steps are added to the ABT all at once and pursued concurrently. 
 
