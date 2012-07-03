@@ -1,7 +1,6 @@
 = Introduction =
 
-Add your content here.
-
+A MicroABL agent interacts with an environment through actions, and perceives the world through objects added to working memory. Unlike ABL, MicroABL does not use sensors. Updates to working memory must not be performed while the `Agent.update()` method is invoked. 
 
 =Actions=
 
