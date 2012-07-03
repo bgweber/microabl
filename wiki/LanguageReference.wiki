@@ -23,14 +23,14 @@ Steps are defined by the `StepPrototype`. These are prototype steps used to defi
     * stepName: name of the new root goal 
     * parameters: goal parameters, specified as literals and Variables
  
-  * *WaitStep:* suspended until wait conditions are met 
+  * *Wait Step:* suspended until wait conditions are met 
     * waitConditions: conditions to wait on 
      
-  * *FailStep:* immediately returns failure 
+  * *Fail Step:* immediately returns failure 
    
-  * *SucceedStep:* immediately returns success 
+  * *Succeed Step:* immediately returns success 
 
-  * *MentalAct:* invokes a Java method (blocks the execution of the ABT) 
+  * *Mental Act:* invokes a Java method (blocks the execution of the ABT) 
     * actionClass: name of the class that contains the method 
     * stepName: name of the static method to invoke
     * parameters: method parameters, specified as literals and Variables
@@ -39,11 +39,9 @@ Steps are defined by the `StepPrototype`. These are prototype steps used to defi
 
 = Modifiers =
 
-
- *     
- * The following modifiers are supported:
- *   None - immediately returns the status of the child 
- *   Persistent - continues to perform the step regardless of step success or failure
- *   IgnoreFailure - returns success when the step fails or succeeds 
- *   PersistentWhenSucceeds - continues to perform the step when it succeeds 
- *   PersistentWhenFails  - continues to perform the step when it fails  
+Modifiers can be used to change the result of a step or to retry steps. The following modifiers are supported:
+  * *None:* immediately returns the status of the child 
+  * *Persistent:* continues to perform the step regardless of step success or failure
+  * *Ignore Failure:* returns success when the step fails or succeeds 
+  * *Persistent When Succeeds:* continues to perform the step when it succeeds 
+  * *Persistent When Fails:* continues to perform the step when it fails  
