@@ -16,13 +16,15 @@ To create an ABL agent, it is necessary to provide an `ActionListener` as a para
   * `public void abort(ActionNode action)` 
     * Informs the listener that an executing action should be aborted. 
 
-
 =Working Memory=
 
+Working memory stores the agent's perception of the world. It is a collection of working memory elements (WMEs), which are indexed by class. All WMEs must extend the `WME` base class and provide Java Bean style getters for attributes that need to be retrieved by ABL behaviors. The following operations can be performed on working memory: 
 
-= Details =
+  * `void addWME(WME wme)`
+    * Adds a WME to working memory. 
+ 
+  * `void removeWME(WME wme)`
+    * Removes a WME from working memory. 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * `HashSet<WME> getWMEs(Class<? extends WME> wmeClass)` 
+    * Returns all WMEs of the specified class. 
