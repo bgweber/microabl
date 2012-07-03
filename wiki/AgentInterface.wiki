@@ -10,21 +10,11 @@ To create an ABL agent, it is necessary to provide an `ActionListener` as a para
   * `public void execute(ActionNode action)`
     * Informs the listener that an action has been selected for execution. 
 
-  * 
-	/**
-	 * Informs the listener that an action has been selected for execution. 
-	 */
-	public void execute(ActionNode action);
-
-	/**
-	 * Informs the listener that the action is executing during a decision cycle. 
-	 */
-	public void onUpdate(ActionNode action);
-
-	/**
-	 * Informs the listener that an executing action should be aborted. 
-	 */
-	public void abort(ActionNode action);
+  * `public void onUpdate(ActionNode action)`
+    * Informs the listener that the action is executing during a decision cycle. 
+  
+  * `public void abort(ActionNode action)` 
+    * Informs the listener that an executing action should be aborted. 
 
 
 =Working Memory=
