@@ -1,5 +1,3 @@
-#summary Language Reference
-
 = Introduction =
 
 MicroABL supports a subset of ABL features. One of the main limitations is a lack of support for meta-behaviors and joint goals. An overview of some of ABL's semantics is provided in this [http://www.gamasutra.com/blogs/BenWeber/20120308/165151/ABL_versus_Behavior_Trees.php blog post].
@@ -18,25 +16,30 @@ Steps are defined by the `StepPrototype`. These are prototype steps used to defi
     * parameters: action parameters, specified as literals and Variables
 
   * *Subgoal:* creates a new sub goal with the specified parameters
- *    stepName: name of the sub goal
- *    parameters: goal parameters, specified as literals and Variables
- *    
- *  Spawngoal - creates a new root goal with the specified parameters 
- *    stepName: name of the new root goal 
- *    parameters: goal parameters, specified as literals and Variables
- *    
- *  WaitStep - suspended until wait conditions are met 
- *    waitConditions: conditions to wait on 
- *    
- *  FailStep - immediately returns failure 
- *  
- *  SucceedStep - immediately returns success 
- *  
- *  MentalAct - invokes a Java method (blocks the execution of the ABT) 
- *    actionClass: name of the class that contains the method 
- *    stepName: name of the static method to invoke
- *    parameters: method parameters, specified as literals and Variables
- *    resultBinding: an optional parameter for binding the result to a behavior-scoped variable 
+    * stepName: name of the sub goal
+    * parameters: goal parameters, specified as literals and Variables
+  
+  * *Spawngoal:* creates a new root goal with the specified parameters 
+    * stepName: name of the new root goal 
+    * parameters: goal parameters, specified as literals and Variables
+ 
+  * *WaitStep:* suspended until wait conditions are met 
+    * waitConditions: conditions to wait on 
+     
+  * *FailStep:* immediately returns failure 
+   
+  * *SucceedStep:* immediately returns success 
+
+  * *MentalAct:* invokes a Java method (blocks the execution of the ABT) 
+    * actionClass: name of the class that contains the method 
+    * stepName: name of the static method to invoke
+    * parameters: method parameters, specified as literals and Variables
+    * resultBinding: an optional parameter for binding the result to a behavior-scoped variable 
+
+
+= Modifiers =
+
+
  *     
  * The following modifiers are supported:
  *   None - immediately returns the status of the child 
@@ -44,6 +47,3 @@ Steps are defined by the `StepPrototype`. These are prototype steps used to defi
  *   IgnoreFailure - returns success when the step fails or succeeds 
  *   PersistentWhenSucceeds - continues to perform the step when it succeeds 
  *   PersistentWhenFails  - continues to perform the step when it fails  
-
-
-= Modifiers =
