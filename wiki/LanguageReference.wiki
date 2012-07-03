@@ -12,5 +12,37 @@ Behaviors are defined by the `BehaviorPrototype` class, which represent an ABL b
 
 = Step Types =
 
+Steps are defined by the `StepPrototype`. These are prototype steps used to define the behavior library and are not added to the ABT. Priorities and modifiers can be assign to all step types. The following step types are provided:
+  * *Action:* performs a physcal action
+    * stepName: name of the physical action
+    * parameters: action parameters, specified as literals and Variables
+  * *Subgoal:* creates a new sub goal with the specified parameters
+ *    stepName: name of the sub goal
+ *    parameters: goal parameters, specified as literals and Variables
+ *    
+ *  Spawngoal - creates a new root goal with the specified parameters 
+ *    stepName: name of the new root goal 
+ *    parameters: goal parameters, specified as literals and Variables
+ *    
+ *  WaitStep - suspended until wait conditions are met 
+ *    waitConditions: conditions to wait on 
+ *    
+ *  FailStep - immediately returns failure 
+ *  
+ *  SucceedStep - immediately returns success 
+ *  
+ *  MentalAct - invokes a Java method (blocks the execution of the ABT) 
+ *    actionClass: name of the class that contains the method 
+ *    stepName: name of the static method to invoke
+ *    parameters: method parameters, specified as literals and Variables
+ *    resultBinding: an optional parameter for binding the result to a behavior-scoped variable 
+ *     
+ * The following modifiers are supported:
+ *   None - immediately returns the status of the child 
+ *   Persistent - continues to perform the step regardless of step success or failure
+ *   IgnoreFailure - returns success when the step fails or succeeds 
+ *   PersistentWhenSucceeds - continues to perform the step when it succeeds 
+ *   PersistentWhenFails  - continues to perform the step when it fails  
+
 
 = Modifiers =
