@@ -4,8 +4,11 @@
 
 MicroABL supports a subset of ABL features. One of the main limitations is a lack of support for meta-behaviors and joint goals. An overview of some of ABL's semantics is provided in this [http://www.gamasutra.com/blogs/BenWeber/20120308/165151/ABL_versus_Behavior_Trees.php blog post].
 
-
 = Behaviors =
+
+Behaviors are defined by the BehaviorPrototype class, which represent an ABL behavior. The following behavior types are supported:
+  * *Sequential:* steps are added to the ABT one at a time.
+  * *Parallel:* steps are added to the ABT all at once and pursued concurrently. 
 
 = Step Types =
 
