@@ -10,7 +10,7 @@ Behaviors are defined by the `BehaviorPrototype` class, which represent an ABL b
 
 = Step Types =
 
-Steps are defined by the `StepPrototype`. These are prototype steps used to define the behavior library and are not added to the ABT. Priorities and modifiers can be assign to all step types. The following step types are provided:
+Steps are defined by the `StepPrototype` class. These are prototype steps used to define the behavior library and are not added to the ABT. Priorities and modifiers can be assigned to all step types. The following step types are provided:
   * *Action:* performs a physcal action
     * stepName: name of the physical action
     * parameters: action parameters, specified as literals and Variables
