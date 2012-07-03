@@ -16,6 +16,7 @@ Steps are defined by the `StepPrototype`. These are prototype steps used to defi
   * *Action:* performs a physcal action
     * stepName: name of the physical action
     * parameters: action parameters, specified as literals and Variables
+
   * *Subgoal:* creates a new sub goal with the specified parameters
  *    stepName: name of the sub goal
  *    parameters: goal parameters, specified as literals and Variables
