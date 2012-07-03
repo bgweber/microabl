@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 /**
  * 
- * Represents an ABL behavior step. These are prototype behaviors used to define the 
+ * Represents an ABL behavior. These are prototype behaviors used to define the 
  * behavior library and are not added to the ABT. 
  * 
  * Behavior parameters are bound to behavior-scoped variables. 
