@@ -13,24 +13,22 @@ initial_tree {
   with (priority 1) subgoal manageMovement();
 }*/
 
-ArrayList<StepPrototype> steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(LogAction).setParameters(new Object[] { "Starting Chaser Agent" }).setPriority(3));
-steps.add(StepPrototype.createSubgoal("manageFiring").setPriority(2));  
-steps.add(StepPrototype.createSubgoal("manageMovement").setPriority(1)); 
-behaviorLibrary.add(BehaviorPrototype.createParallel(Agent.INITIAL_GOAL).setSteps(steps));		
- 		
+initial_tree(
+  with(priority(3), action(LogAction, "Starting Chaser Agent")),
+  with(priority(2), subgoal(ManageFiring)),
+  with(priority(1), subgoal(ManageMovement))),
 
+					
 /*
 sequential behavior manageFiring() {
   subgoal Wait(2000); // this suspends the execution of the behavior
   with (persistent) subgoal fire();
 }*/
 		 
-steps = new ArrayList<StepPrototype>();
-steps.add(StepPrototype.createAction(WaitAction).setParameters(new Object[] { 2000 })); 
-steps.add(StepPrototype.createSubgoal("fire").setModifier(StepModifier.Persistent));
-behaviorLibrary.add(BehaviorPrototype.createSequential("manageFiring").setSteps(steps)); 
-		
+sequential_behavior(ManageFiring,
+  action(WaitAction, 2000),
+  with(persistent, subgoal(Fire))),
+						
 
 /*
 sequential behavior fire() {
@@ -43,13 +41,12 @@ sequential behavior fire() {
   subgoal Wait(500); 
 }*/
  
-ArrayList<ConditionPrototype> preconditions = new ArrayList<ConditionPrototype>();
-preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).addBinding("x", "chaserX").addBinding("y", "chaserY"));
-preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("x", "playerX").addBinding("y", "playerY"));
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(FireAction).setParameters(new Object[] { new Variable("chaserX"), new Variable("chaserY"), new Variable("playerX"), new Variable("playerY") }));  
-steps.add(StepPrototype.createAction(WaitAction).setParameters(new Object[] { 500 })); 
-behaviorLibrary.add(BehaviorPrototype.createSequential("fire").setSteps(steps).setPreconditions(preconditions)); 		
+sequential_behavior(Fire,
+  precondition(			     
+    wme(ChaserWME.class,bind(x,chaserX),bind(y,chaserY)),			
+    wme(PlayerWME.class,bind(x,playerX),bind(y,playerY))),
+  action(FireAction, vars(chaserX, chaserY, playerX, playerY)),
+  action(WaitAction, 500)),
  		
 
 /*
@@ -57,10 +54,9 @@ sequential behavior manageMovement() {
   with (persistent) subgoal move();
 }*/ 
  
-steps = new ArrayList<StepPrototype>();
-steps.add(StepPrototype.createSubgoal("move").setModifier(StepModifier.Persistent));
-behaviorLibrary.add(BehaviorPrototype.createSequential("manageMovement").setSteps(steps));
-
+sequential_behavior(ManageMovement,
+  with(persistent, subgoal(Move))),
+		
 
 /*
 sequential behavior move() {
@@ -74,14 +70,14 @@ sequential behavior move() {
   act moveUp();
 }*/ 
  
-preconditions = new ArrayList<ConditionPrototype>();
-preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).addBinding("y", "chaserY")); 
-preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("y", "playerY")); 
-preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("greaterThanSum").setMethodParameters( new Object[] { new Variable("chaserY"), new Variable("playerY"), Game.ChaserSpeed} ));
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(MoveUpAction));  
-behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(3).setSteps(steps).setPreconditions(preconditions)); 		
- 
+sequential_behavior(Move,
+  precondition(
+    wme(PlayerWME.class,bind(y,playerY)),
+    wme(ChaserWME.class,bind(y,chaserY)),				  
+    mental(ChaserWME.class,"greaterThanSum", var(chaserY), var(playerY), Game.ChaserSpeed)),
+  specificity(3),
+  action(MoveUpAction)),
+				 
 
 /*
 sequential behavior move() {
@@ -95,14 +91,14 @@ sequential behavior move() {
   act moveDown();
 }*/
 
-preconditions = new ArrayList<ConditionPrototype>();
-preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).addBinding("y", "chaserY")); 
-preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("y", "playerY"));
-preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("lessThanDiff").setMethodParameters( new Object[] { new Variable("chaserY"), new Variable("playerY"), Game.ChaserSpeed} )); 
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(MoveDownAction));  
-behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(3).setSteps(steps).setPreconditions(preconditions)); 		
-
+sequential_behavior(Move,
+  precondition(
+    wme(PlayerWME.class,bind(y,playerY)),
+    wme(ChaserWME.class,bind(y,chaserY)),
+    mental(ChaserWME.class,"lessThanDiff", var(chaserY), var(playerY), Game.ChaserSpeed)),
+  specificity(3),
+  action(MoveDownAction)),
+				
 
 /*
 sequential behavior move() {
@@ -116,12 +112,14 @@ sequential behavior move() {
   act moveLeft();
 }*/ 
 
-preconditions = new ArrayList<ConditionPrototype>();
-preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).addBinding("x", "chaserX")); 		preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("x", "playerX")); 		preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("greaterThanSum").setMethodParameters(new Object[] { new Variable("chaserX"), new Variable("playerX"), Game.ChaserSpeed} )); 
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(MoveLeftAction));  
-behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(2).setSteps(steps).setPreconditions(preconditions)); 		
-
+sequential_behavior(Move,
+  precondition(
+    wme(PlayerWME.class,bind(x,playerX)),						 
+    wme(ChaserWME.class,bind(x,chaserX)),
+    mental(ChaserWME.class,"greaterThanSum", var(chaserX), var(playerX), Game.ChaserSpeed)),
+  specificity(2),
+  action(MoveLeftAction)),
+						
 
 /*
 sequential behavior move() {
@@ -135,14 +133,14 @@ sequential behavior move() {
   act moveRight();
 }*/		
  
-preconditions = new ArrayList<ConditionPrototype>();
-preconditions.add(ConditionPrototype.createWMECondition(ChaserWME.class).addBinding("x", "chaserX")); 
-preconditions.add(ConditionPrototype.createWMECondition(PlayerWME.class).addBinding("x", "playerX"));
-preconditions.add(ConditionPrototype.createMental(ChaserWME.class).setMethodName("lessThanDiff").setMethodParameters(new Object[] { new Variable("chaserX"), new Variable("playerX"), Game.ChaserSpeed} )); 
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(MoveRightAction));  
-behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(2).setSteps(steps).setPreconditions(preconditions)); 		
-
+sequential_behavior(Move,
+  precondition(
+    wme(PlayerWME.class,bind(x,playerX)),
+    wme(ChaserWME.class,bind(x,chaserX)),
+    mental(ChaserWME.class,"lessThanDiff", var(chaserX), var(playerX), Game.ChaserSpeed)),
+  specificity(2),
+  action(MoveRightAction)),
+					
 
 /*
 sequential behavior move() {
@@ -151,8 +149,8 @@ sequential behavior move() {
   subgoal Wait(1000); 
 } */ 
 		
-steps = new ArrayList<StepPrototype>();  
-steps.add(StepPrototype.createAction(StopAction));  
-steps.add(StepPrototype.createAction(WaitAction).setParameters(new Object[] { 1000 })); 
-behaviorLibrary.add(BehaviorPrototype.createSequential("move").setSpecificity(1).setSteps(steps)); 						
+sequential_behavior(Move,
+  specificity(1),
+  action(StopAction),
+  action(WaitAction, 1000))
 }}}
