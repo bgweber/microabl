@@ -17,14 +17,14 @@ import microabl.prototype.StepPrototype.StepModifier;
 public class ChaserAgent implements ActionListener {
  
 	// actions 
-	private static String LogAction = "Log";
-	private static String WaitAction = "Wait";
-	private static String FireAction = "Fire";
-	private static String MoveLeftAction = "MoveLeft";
-	private static String MoveRightAction = "MoveRight";
-	private static String MoveUpAction = "MoveUp";
-	private static String MoveDownAction = "MoveDown";
-	private static String StopAction = "Stop";
+	public static String LogAction = "Log";
+	public static String WaitAction = "Wait";
+	public static String FireAction = "Fire";
+	public static String MoveLeftAction = "MoveLeft";
+	public static String MoveRightAction = "MoveRight";
+	public static String MoveUpAction = "MoveUp";
+	public static String MoveDownAction = "MoveDown";
+	public static String StopAction = "Stop";
 	 	
 	/** a reference to the game */ 
 	private Game game; 

@@ -84,6 +84,7 @@ public class Game extends JPanel implements KeyListener {
 	 */
 	private Game() {
 		agent = new ChaserAgent(this);
+//		agent = new ChaserAgentEmbedded(this);
 		
 		if (showViewer) {
 			abtViewer = new ABTViewer(agent.getAgent());
