@@ -1,6 +1,6 @@
 = Embedded Language =
 
-[http://users.soe.ucsc.edu/~amsmith/ Adam Smith] has provided a collection of utility methods that greatly reduce the amount of syntax needed to author MicroABL agents. The methods are defined in `src/microabl/EmbeddedLanguage.java` and demonstrated in `src/chaseragent/ChaserAgentEmbedded.java`. The code shows a comparison of the embedded language and the original ABL syntax:
+[http://users.soe.ucsc.edu/~amsmith/ Adam Smith] has provided a collection of utility methods that greatly reduce the amount of syntax needed to author MicroABL agents. The methods are defined in `src/microabl/EmbeddedLanguage.java` and demonstrated in `src/chaseragent/ChaserAgentEmbedded.java`. This agent code shows a comparison of the embedded language and the original ABL syntax:
 
 {{{
 /*
