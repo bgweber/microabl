@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import microabl.prototype.BehaviorPrototype;
 
 import static microabl.EmbeddedLanguage.*;
-
+/**
+ * A re-implementation of the chaser agent using the embedded language utility class. 
+ *
+ */
 public class ChaserAgentEmbedded extends ChaserAgent {
 
 	public ChaserAgentEmbedded(Game game) {
